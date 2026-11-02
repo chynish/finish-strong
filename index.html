@@ -69,6 +69,7 @@ body{margin:0;padding:14px 16px 30px;background:var(--bg);color:var(--text);font
 .tt .me{background:var(--sageTint)}
 .tt .v{font-variant-numeric:tabular-nums;font-weight:600}
 .tt .v small{color:var(--muted);font-weight:normal;font-size:11px}
+.wkt{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:4px}
 .rings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
 .rg{text-align:center}
 .rg svg{width:100%;max-width:150px;height:auto}
@@ -164,13 +165,14 @@ function renderTeam(){
     return;
   }
   const E=[{k:'Steps',l:'Steps',max:61,c:'#b23a48'},{k:'Water',l:'Water',max:61,c:'#4f8fc0'},{k:'Stretch',l:'Stretch',max:61,c:'#7fa05f'},{k:'run',l:'Runs',max:27,c:'#d4a017'},{k:'letter',l:'Letters',max:9,c:'#c8693a'}];
-  const T={};NAMES.forEach(n=>{T[n]=tally(n===me?s:toObj(team[n]));});
-  let h='<h3>Team BURN</h3><div class="sync">'+status+'</div><div class="tt"><div class="hd"></div>'+
+  const T={},W={},wk=curWeek(),dm=wk===9?5:7,wm={Steps:dm,Water:dm,Stretch:dm,run:3,letter:1};
+  NAMES.forEach(n=>{const o=n===me?s:toObj(team[n]);T[n]=tally(o);W[n]=weekTally(o,wk);});
+  let h='<h3>Team BURN</h3><div class="sync">'+status+'</div><div class="wkt">Week '+wk+' progress</div><div class="tt"><div class="hd"></div>'+
     NAMES.map(n=>`<div class="hd ${n===me?'me':''}">${n}<small>${n===me?'you':(team[n]&&team[n].u?ago(team[n].u).replace('updated ',''):'not started')}</small></div>`).join('');
   E.forEach(e=>{
-    h+=`<div class="lb"><i style="background:${e.c}"></i>${e.l}</div>`+NAMES.map(n=>`<div class="v ${n===me?'me':''}">${T[n][e.k]}<small>/${e.max}</small></div>`).join('');
+    h+=`<div class="lb"><i style="background:${e.c}"></i>${e.l}</div>`+NAMES.map(n=>`<div class="v ${n===me?'me':''}">${W[n][e.k]}<small>/${wm[e.k]}</small></div>`).join('');
   });
-  h+='</div><div class="rings">'+NAMES.map(n=>{
+  h+='</div><div class="wkt" style="margin-top:16px">Total challenge progress</div><div class="rings">'+NAMES.map(n=>{
     const R=[52,44,36,28,20];let svg='<svg viewBox="0 0 120 120">';
     E.forEach((e,i)=>{
       const r=R[i],len=2*Math.PI*r,p=Math.min(1,T[n][e.k]/e.max);
